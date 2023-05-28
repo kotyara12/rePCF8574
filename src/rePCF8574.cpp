@@ -90,7 +90,7 @@ bool rePCF8574::write(uint8_t pin, const uint8_t value)
 // -------------------------------------------------- Changes detection --------------------------------------------------
 // -----------------------------------------------------------------------------------------------------------------------
 
-uint8_t rePCF8574::update()
+uint8_t rePCF8574::update(bool reset)
 {
   // Read new data from i2c ( reset INT!!! )
   uint8_t new_data = 0;
@@ -100,7 +100,12 @@ uint8_t rePCF8574::update()
   
   // Compare previous and new data
   uint8_t changes = _data ^ new_data;
-  _data = new_data;
+  // rlog_d(logTAG, "Update: prev data: 0x%02X, new data: 0x%02X, changed: 0x%02X", _data, new_data, changes);
+  if (reset) {
+    write8(_data);
+  } else {
+    _data = new_data;
+  };
 
   if (changes != 0) {
     // Prepare data for events
@@ -112,7 +117,7 @@ uint8_t rePCF8574::update()
     for (uint8_t i = 0; i < 8; i++) {
       if ((changes & (1 << i)) > 0) {
         data.pin = i;
-        data.value = (uint8_t)((_data & (1 << i)) > 0);
+        data.value = (uint8_t)((new_data & (1 << i)) > 0);
         eventLoopPost(RE_GPIO_EVENTS, RE_GPIO_CHANGE, &data, sizeof(data), portMAX_DELAY);
         if (_callback) {
           _callback((void*)this, data, 0);

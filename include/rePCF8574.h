@@ -36,7 +36,7 @@ class rePCF8574 {
     bool write(uint8_t pin, const uint8_t value);
 
     // Reread data from i2c. If changes are detected, events will be posted to the event loop. Returns the bits that have been changed
-    uint8_t update();
+    uint8_t update(bool reset);
   private:
     i2c_port_t _numI2C = 0; 
     uint8_t _addrI2C = 0;
