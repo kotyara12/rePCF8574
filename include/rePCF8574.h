@@ -38,7 +38,7 @@ class rePCF8574 {
     // Reread data from i2c. If changes are detected, events will be posted to the event loop. Returns the bits that have been changed
     uint8_t update(bool reset);
   private:
-    i2c_port_t _numI2C = 0; 
+    i2c_port_t _numI2C = I2C_NUM_0; 
     uint8_t _addrI2C = 0;
     uint8_t _data = 0xFF;
     cb_gpio_change_t _callback = nullptr;
